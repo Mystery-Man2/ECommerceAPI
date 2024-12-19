@@ -6,7 +6,8 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-from sqlalchemy import ForeignKey, Table, String, Column, DateTime, Float
+from marshmallow import fields
+from sqlalchemy import ForeignKey, Table, String, Integer, Column, DateTime, Float
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from typing import List, Optional
 
@@ -58,7 +59,7 @@ class Order(Base):
     __tablename__ = "orders"
     order_id: Mapped[int] = mapped_column(primary_key=True)
     order_date: Mapped[DateTime] = mapped_column(DateTime, default=DateTime)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.user_id"))
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.user_id"))
     users: Mapped[List["User"]] = relationship(secondary=user_orders, back_populates="orders")
     products: Mapped[List["Product"]] = relationship(secondary=order_products, back_populates="orders")
 
@@ -68,7 +69,7 @@ class Product(Base):
     
     product_id: Mapped[int] = mapped_column(primary_key=True)
     product_name: Mapped[str] = mapped_column(String(30))
-    product_price: Mapped[int] = mapped_column()
+    product_price: Mapped[float] = mapped_column(Float)
     orders: Mapped[List["Order"]] = relationship(secondary=order_products, back_populates="products")
 
 
@@ -82,7 +83,7 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
 class OrderSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Order
-        
+    user_id = fields.Integer()
 # Product Schema
 class ProductSchema(ma.SQLAlchemyAutoSchema):
     class Meta:

@@ -130,7 +130,7 @@ def create_order():
         return jsonify({"message": "Invalid user id"}), 400
     
     
-    new_order = Order(order_date=order_data['date'])
+    new_order = Order(order_date=order_data['order_date'], user_id=order_data['user_id'])
     db.session.add(new_order)
     db.session.commit()
 
